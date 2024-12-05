@@ -51,11 +51,11 @@ resource "aws_ecr_repository" "python_app" {
  #   scan_on_push = true
   #}
 
-  tags = {
-    Environment = "POC"
-    Team        = "DevOps"
-  }
-}
+  #tags = {
+  #  Environment = "POC"
+  #  Team        = "DevOps"
+  #}
+#}
 
 # Docker Image Build for Python App
 resource "docker_image" "python_app" {
