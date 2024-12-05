@@ -23,11 +23,11 @@ variable "python_repo_name" {
   default     = "python-app"
 }
 
-variable "java_repo_name" {
-  description = "Name of the Java ECR repository"
-  type        = string
-  default     = "java-repo"
-}
+#variable "java_repo_name" {
+#  description = "Name of the Java ECR repository"
+#  type        = string
+#  default     = "java-repo"
+#}
 
 # ECR Repository for Python App
 resource "aws_ecr_repository" "python_app" {
@@ -44,12 +44,12 @@ resource "aws_ecr_repository" "python_app" {
 }
 
 # ECR Repository for Java App
-resource "aws_ecr_repository" "java_app" {
-  name         = var.java_repo_name
-  force_delete = true
-  image_scanning_configuration {
-    scan_on_push = true
-  }
+#resource "aws_ecr_repository" "java_app" {
+#  name         = var.java_repo_name
+#  force_delete = true
+ # image_scanning_configuration {
+ #   scan_on_push = true
+  #}
 
   tags = {
     Environment = "POC"
@@ -67,13 +67,13 @@ resource "docker_image" "python_app" {
 }
 
 # Docker Image Build for Java App
-resource "docker_image" "java_app" {
-  name = "${aws_ecr_repository.java_app.repository_url}:latest"
-  build {
-    context    = "${path.module}/docker/java"
-    dockerfile = "Dockerfile"
-  }
-}
+#resource "docker_image" "java_app" {
+ # name = "${aws_ecr_repository.java_app.repository_url}:latest"
+ # build {
+  #  context    = "${path.module}/docker/java"
+  #  dockerfile = "Dockerfile"
+  #}
+#}
 
 # ECR Login for Python App
 resource "null_resource" "docker_ecr_login_python" {
@@ -87,15 +87,15 @@ resource "null_resource" "docker_ecr_login_python" {
 }
 
 # ECR Login for Java App
-resource "null_resource" "docker_ecr_login_java" {
-  provisioner "local-exec" {
-    environment = {
-      # "AWS_PROFILE"     = "sreenivas"  # Use your profile name
-      "AWS_DEFAULT_REGION" = "ap-south-1"
-    }
-    command = "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${aws_ecr_repository.java_app.repository_url}"
-  }
-}
+#resource "null_resource" "docker_ecr_login_java" {
+ # provisioner "local-exec" {
+  #  environment = {
+   #   # "AWS_PROFILE"     = "sreenivas"  # Use your profile name
+    #  "AWS_DEFAULT_REGION" = "ap-south-1"
+    #}
+    #command = "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${aws_ecr_repository.java_app.repository_url}"
+  #}
+#}
 
 # Push the Python Image to ECR
 resource "null_resource" "push_python_to_ecr" {
@@ -110,31 +110,31 @@ resource "null_resource" "push_python_to_ecr" {
 }
 
 # Push the Java Image to ECR
-resource "null_resource" "push_java_to_ecr" {
-  depends_on = [
-    docker_image.java_app,
-    null_resource.docker_ecr_login_java
-  ]
+#resource "null_resource" "push_java_to_ecr" {
+#  depends_on = [
+#    docker_image.java_app,
+#    null_resource.docker_ecr_login_java
+#  ]
 
-  provisioner "local-exec" {
-    command = "docker push ${aws_ecr_repository.java_app.repository_url}:latest"
-  }
-}
+ # provisioner "local-exec" {
+ #   command = "docker push ${aws_ecr_repository.java_app.repository_url}:latest"
+  #}
+#}
 
 # Output ECR Repository URLs
 output "python_ecr_repository_url" {
   value = aws_ecr_repository.python_app.repository_url
 }
 
-output "java_ecr_repository_url" {
-  value = aws_ecr_repository.java_app.repository_url
-}
+#output "java_ecr_repository_url" {
+#  value = aws_ecr_repository.java_app.repository_url
+#}
 
 # Output Docker Image URLs
 output "python_docker_image_url" {
   value = docker_image.python_app.name
 }
 
-output "java_docker_image_url" {
-  value = docker_image.java_app.name
-}
+#output "java_docker_image_url" {
+#  value = docker_image.java_app.name
+#}
