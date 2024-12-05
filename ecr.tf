@@ -61,7 +61,7 @@ resource "aws_ecr_repository" "java_app" {
 resource "docker_image" "python_app" {
   name = "${aws_ecr_repository.python_app.repository_url}:latest"
   build {
-    context    = "C:/Users/smobi/Desktop/eks/mobin-exp4/eks-ecs/docker/python"
+    context    = "docker/python"
     dockerfile = "Dockerfile"
   }
 }
@@ -70,7 +70,7 @@ resource "docker_image" "python_app" {
 resource "docker_image" "java_app" {
   name = "${aws_ecr_repository.java_app.repository_url}:latest"
   build {
-    context    = "C:/Users/smobi/Desktop/eks/mobin-exp4/eks-ecs/docker/java"
+    context    = "docker/java"
     dockerfile = "Dockerfile"
   }
 }
@@ -82,9 +82,7 @@ resource "null_resource" "docker_ecr_login_python" {
       # "AWS_PROFILE"     = "sreenivas"  # Use your profile name
       "AWS_DEFAULT_REGION" = "ap-south-1"
     }
-    command = <<EOT
-      aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${aws_ecr_repository.python_app.repository_url}
-    EOT
+    command = "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${aws_ecr_repository.python_app.repository_url}"
   }
 }
 
@@ -95,9 +93,7 @@ resource "null_resource" "docker_ecr_login_java" {
       # "AWS_PROFILE"     = "sreenivas"  # Use your profile name
       "AWS_DEFAULT_REGION" = "ap-south-1"
     }
-    command = <<EOT
-      aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${aws_ecr_repository.java_app.repository_url}
-    EOT
+    command = "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${aws_ecr_repository.java_app.repository_url}"
   }
 }
 
