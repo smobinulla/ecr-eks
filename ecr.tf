@@ -61,7 +61,7 @@ resource "aws_ecr_repository" "java_app" {
 resource "docker_image" "python_app" {
   name = "${aws_ecr_repository.python_app.repository_url}:latest"
   build {
-    context    = "docker/python"
+    context    = "${path.module}/docker/python"
     dockerfile = "Dockerfile"
   }
 }
@@ -70,7 +70,7 @@ resource "docker_image" "python_app" {
 resource "docker_image" "java_app" {
   name = "${aws_ecr_repository.java_app.repository_url}:latest"
   build {
-    context    = "docker/java"
+    context    = "${path.module}/docker/java"
     dockerfile = "Dockerfile"
   }
 }
